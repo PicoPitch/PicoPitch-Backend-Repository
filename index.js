@@ -29,8 +29,7 @@ app.get('/', (req, res, next) => {
 
 // error handling
 app.use((req, res, next) => {
-    const err = new BaseError(status.NOT_FOUND);
-    next(err);
+    res.send(response(status.BAD_REQUEST, "Base Error"));
 });
 
 // error handling
