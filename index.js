@@ -4,7 +4,7 @@ import { specs } from './config/swagger.config.js';
 import SwaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-
+import { BaseError } from "./src/config/error.js";
 import { response } from './config/response.js';
 import { status } from './config/response.status.js';
 import { healthRoute } from './src/routes/health.route.js';
@@ -30,7 +30,8 @@ app.get('/', (req, res, next) => {
 
 // error handling
 app.use((req, res, next) => {
-    res.send(response(status.BAD_REQUEST, "Base Error"));
+  const err = new BaseError(status.NOT_FOUND);
+  next(err);
 });
 
 app.use((err, req, res, next) => {
