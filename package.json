@@ -11,6 +11,7 @@
   },
   "author": "",
   "license": "ISC",
+  "type": "module",
   "description": "",
   "dependencies": {
     "aws-sdk": "^2.1550.0",
