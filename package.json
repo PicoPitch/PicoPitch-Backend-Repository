@@ -35,7 +35,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.22.15",
     "@babel/cli": "^7.22.15",
     "@babel/core": "^7.23.7",
     "@babel/node": "^7.22.15",
