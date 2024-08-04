@@ -4,7 +4,7 @@ import { getPresentationsListController } from './presentations.controller.js'; 
 
 const router = express.Router();
 
-router.get('/', getPresentationsListController);
+router.get('/:userId', getPresentationsListController);
 
 
 export { router as PresentationRoute };

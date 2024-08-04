@@ -1,7 +1,7 @@
 // repositories/presentationRepository.js
 import pool from '../config/db.connect.js';
 
-export const getPresentationsList = async (order) => {
+export const getPresentationsList = async (userId, order) => {
     try {
         let orderBy = 'updated_date';
 
@@ -9,10 +9,11 @@ export const getPresentationsList = async (order) => {
             orderBy = 'presentation_date';
         }
 
-        // 도메인 http://localhost:8080/presentations?order=upcoming
+        //          특정 유저 ID의 프레젠테이션을 recent 순으로 정렬: http://localhost:8080/presentations/user/1?order=recent
+        //          특정 유저 ID의 프레젠테이션을 presentation_date 순으로 정렬: http://localhost:8080/presentations/user/1?order=upcoming
 
-        const query = `SELECT * FROM PPTs ORDER BY ${orderBy} DESC`;
-        const [results] = await pool.query(query); // async/await 사용
+        const query = `SELECT * FROM PPTs WHERE user_id = ? ORDER BY ${orderBy} DESC`;
+        const [results] = await pool.query(query, [userId]); // userId를 쿼리에 바인딩
         return results;
     } catch (error) {
         console.error('Query error:', error);

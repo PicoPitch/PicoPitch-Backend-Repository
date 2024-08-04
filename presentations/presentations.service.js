@@ -1,10 +1,10 @@
 // services/presentationService.js
 import { getPresentationsList as getPresentationsListRepo } from '../presentations/presentations.repository.js';
 
-export const getPresentationsList = async (order) => {
+export const getPresentationsList = async (userId, order) => {
     try {
         // 정렬 기준에 따라 쿼리 호출
-        const results = await getPresentationsListRepo(order);
+        const results = await getPresentationsListRepo(userId, order);  //userId와 order를 레포지토리에 전달
         return results;
     } catch (error) {
         console.error('Service error:', error);
