@@ -1,5 +1,8 @@
 // services/presentationService.js
-import { getPresentationsList as getPresentationsListRepo, deletePresentation as deletePresentationRepo } from '../presentations/presentations.repository.js';
+import {
+    getPresentationsList as getPresentationsListRepo, deletePresentation as deletePresentationRepo,
+    updatePresentationTitle as updatePresentationTitleRepo
+} from '../presentations/presentations.repository.js';
 
 export const getPresentationsList = async (userId, order) => {
     try {
@@ -15,6 +18,15 @@ export const getPresentationsList = async (userId, order) => {
 export const deletePresentation = async (pptId) => {
     try {
         await deletePresentationRepo(pptId);
+    } catch (error) {
+        console.error('Service error:', error);
+        throw error;
+    }
+};
+
+export const updatePresentationTitle = async (pptId, title) => {
+    try {
+        await updatePresentationTitleRepo(pptId, title);
     } catch (error) {
         console.error('Service error:', error);
         throw error;

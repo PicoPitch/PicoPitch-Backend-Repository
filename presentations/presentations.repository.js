@@ -27,3 +27,13 @@ export const deletePresentation = async (pptId) => {
         throw error;
     }
 };
+
+export const updatePresentationTitle = async (pptId, title) => {
+    try {
+        const query = 'UPDATE PPTs SET title = ? WHERE ppt_id = ?';
+        await pool.query(query, [title, pptId]);
+    } catch (error) {
+        console.error('Query error:', error);
+        throw error;
+    }
+};

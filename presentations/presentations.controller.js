@@ -1,5 +1,5 @@
 // controllers/presentationController.js
-import { getPresentationsList, deletePresentation } from './presentations.service.js';
+import { getPresentationsList, deletePresentation, updatePresentationTitle } from './presentations.service.js';
 
 
 export const getPresentationsListController = async (req, res, next) => {
@@ -26,6 +26,25 @@ export const deletePresentationController = async (req, res, next) => {
         console.error('Error deleting presentation:', error);
         next({ status: 500, message: 'Database error', error });
     }
+};
+
+export const updatePresentationTitleController = async (req, res, next) => {
+    try {
+        const pptId = req.params.pptId;
+        const { title } = req.body; //request body로부터 새로운 제목 받기
+
+        if (!title) {
+            return res.status(400).json({ message: 'Title is required.' });
+        }
+
+        await updatePresentationTitle(pptId, title);
+        res.status(200).json({ message: 'Presentation title updated successfully.' });
+
+    } catch (error) {
+        console.error('Error updating presentation title:', error);
+        next({ status: 500, message: 'Database error', error });
+    }
+
 };
 
 
