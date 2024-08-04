@@ -1,5 +1,5 @@
 // controllers/presentationController.js
-import { getPresentationsList } from './presentations.service.js';
+import { getPresentationsList, deletePresentation } from './presentations.service.js';
 
 
 export const getPresentationsListController = async (req, res, next) => {
@@ -12,6 +12,18 @@ export const getPresentationsListController = async (req, res, next) => {
         res.status(200).json({ presentations: results });
     } catch (error) {
         console.error('Error fetching presentations:', error);
+        next({ status: 500, message: 'Database error', error });
+    }
+};
+
+export const deletePresentationController = async (req, res, next) => {
+    try {
+        const pptId = req.params.pptId;
+
+        await deletePresentation(pptId);
+        res.status(200).json({ message: 'Presentation deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting presentation:', error);
         next({ status: 500, message: 'Database error', error });
     }
 };

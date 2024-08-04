@@ -1,10 +1,11 @@
 
 import express from 'express';
-import { getPresentationsListController } from './presentations.controller.js'; // 상대 경로 수정
+import { getPresentationsListController, deletePresentationController } from './presentations.controller.js';
 
 const router = express.Router();
 
 router.get('/:userId', getPresentationsListController);
 
+router.delete('/delete/:pptId', deletePresentationController);
 
 export { router as PresentationRoute };
