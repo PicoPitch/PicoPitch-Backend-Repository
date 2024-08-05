@@ -8,5 +8,6 @@ router.post('/', commentController.createComment);
 router.get('/:board_id', commentController.getComments);
 router.put('/:comment_id', commentController.updateComment);
 router.delete('/:comment_id', commentController.deleteComment);
+router.post('/:comment_id/like', commentController.toggleLike); 
 
 export { router as commentRoute };

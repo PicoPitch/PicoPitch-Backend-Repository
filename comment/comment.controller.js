@@ -20,9 +20,10 @@ export class CommentController {
 
   async getComments(req, res, next) {
     const { board_id } = req.params;
+    const { user_id } = req.query; 
     
     try {
-      const comments = await commentDAO.getCommentsByBoardId(board_id);
+      const comments = await commentDAO.getCommentsByBoardId(board_id, user_id);
       res.status(200).send(response(status.SUCCESS, 'Comments retrieved', comments));
     } catch (error) {
       next(error);
@@ -33,6 +34,10 @@ export class CommentController {
     const { comment_id } = req.params;
     const { content } = req.body;
     
+    if (!content) {
+      return res.status(400).send(response(status.FAILURE, 'Content is required'));
+    }
+
     try {
       await commentDAO.updateComment(comment_id, content);
       res.status(200).send(response(status.SUCCESS, 'Comment updated'));
@@ -43,10 +48,29 @@ export class CommentController {
 
   async deleteComment(req, res, next) {
     const { comment_id } = req.params;
+    const { user_id } = req.body;
     
     try {
-      await commentDAO.deleteComment(comment_id);
-      res.status(200).send(response(status.SUCCESS, 'Comment deleted'));
+      await commentDAO.deleteComment(comment_id, user_id);
+      res.status(200).send(response(status.SUCCESS, '댓글이 삭제되었습니다'));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async toggleLike(req, res, next) {
+    const { comment_id } = req.params;
+    const { user_id } = req.body;
+    
+    try {
+      const result = await commentDAO.toggleLike(comment_id, user_id);
+      const likeCount = await commentDAO.getLikeCount(comment_id);
+      
+      if (result === 'removed') {
+        res.status(200).send(response(status.SUCCESS, 'Like removed', { likeCount }));
+      } else {
+        res.status(200).send(response(status.SUCCESS, 'Like added', { likeCount }));
+      }
     } catch (error) {
       next(error);
     }
