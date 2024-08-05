@@ -1,7 +1,7 @@
 // services/presentationService.js
 import {
     getPresentationsList as getPresentationsListRepo, deletePresentation as deletePresentationRepo,
-    updatePresentationTitle as updatePresentationTitleRepo
+    updatePresentationTitle as updatePresentationTitleRepo, createPresentation as createPresentationRepo
 } from '../presentations/presentations.repository.js';
 
 export const getPresentationsList = async (userId, order) => {
@@ -33,6 +33,12 @@ export const updatePresentationTitle = async (pptId, title) => {
     }
 };
 
-
-
+export const createPresentation = async (presentationData) => {
+    try {
+        await createPresentationRepo(presentationData);
+    } catch (error) {
+        console.error('Service error:', error);
+        throw error;
+    }
+};
 

@@ -1,5 +1,8 @@
 // controllers/presentationController.js
-import { getPresentationsList, deletePresentation, updatePresentationTitle } from './presentations.service.js';
+import {
+    getPresentationsList, deletePresentation, updatePresentationTitle,
+    createPresentation
+} from './presentations.service.js';
 
 
 export const getPresentationsListController = async (req, res, next) => {
@@ -45,6 +48,24 @@ export const updatePresentationTitleController = async (req, res, next) => {
         next({ status: 500, message: 'Database error', error });
     }
 
+};
+
+export const createPresentationController = async (req, res, next) => {
+    try {
+        const { filename, title, presentation_date, userId, keywords } = req.body; // 요청 본문에서 데이터 추출
+
+        // 필수 입력 데이터 확인
+        if (!filename || !title || !presentation_date || !userId) {
+            return res.status(400).json({ message: 'All fields are required.' });
+        }
+
+        // 서비스 계층으로 데이터 전달
+        await createPresentation({ filename, title, presentation_date, userId, keywords });
+        res.status(201).json({ message: 'Presentation created successfully.' });
+    } catch (error) {
+        console.error('Error creating presentation:', error);
+        next({ status: 500, message: 'Database error', error });
+    }
 };
 
 
