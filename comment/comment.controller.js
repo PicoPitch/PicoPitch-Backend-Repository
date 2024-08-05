@@ -75,4 +75,20 @@ export class CommentController {
       next(error);
     }
   }
+
+  async reportComment(req, res, next) {
+    const { comment_id } = req.params;
+    const { user_id, reason } = req.body;
+
+    if (!['유해 정보 포함', '욕설 및 비방', '악성 댓글'].includes(reason)) {
+      return res.status(400).send(response(status.FAILURE, 'Invalid reason'));
+    }
+
+    try {
+      await commentDAO.reportComment(comment_id, user_id, reason);
+      res.status(201).send(response(status.SUCCESS, '댓글 신고를 완료했습니다.'));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

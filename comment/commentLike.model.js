@@ -35,7 +35,6 @@ export const CommentLike = sequelize.define('CommentLike', {
   timestamps: false,
 });
 
-// Define the unique constraint on comment_id and user_id to prevent multiple likes
 CommentLike.sync().then(() => {
   return CommentLike.addIndex(['comment_id', 'user_id'], {
     unique: true,

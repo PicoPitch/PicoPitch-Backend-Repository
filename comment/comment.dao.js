@@ -1,4 +1,7 @@
 import { Comment } from './comment.model.js';
+import { CommentLike } from './commentLike.model.js';
+import { User } from './user.model.js';
+import { CommentReport } from './commentReport.model.js';
 
 export class CommentDAO {
   async createComment(createCommentDTO) {
@@ -78,4 +81,9 @@ export class CommentDAO {
   async getLikeCount(comment_id) {
     return await CommentLike.count({ where: { comment_id } });
   }
+
+  async reportComment(comment_id, user_id, reason) {
+    return await CommentReport.create({ comment_id, user_id, reason });
+  }
+
 }
