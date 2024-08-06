@@ -11,4 +11,4 @@ router.delete('/:comment_id', commentController.deleteComment);
 router.post('/:comment_id/like', commentController.toggleLike); 
 router.post('/:comment_id/report', commentController.reportComment);
 
-export { router as commentRoute };
+export default router; 

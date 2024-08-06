@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../database';
+import { sequelize } from '../../config/database.js'
 //근데 사용자 받아오고 할라면 user 도메인이랑 연동?이 돼야해서 회의하면서 얘기해봐야할 것 같습니다
 export const Comment = sequelize.define('Comment', {
   comment_id: {

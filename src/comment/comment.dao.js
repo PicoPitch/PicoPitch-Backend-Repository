@@ -85,5 +85,4 @@ export class CommentDAO {
   async reportComment(comment_id, user_id, reason) {
     return await CommentReport.create({ comment_id, user_id, reason });
   }
-
 }
