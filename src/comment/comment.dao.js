@@ -1,7 +1,8 @@
-import { Comment } from './comment.model.js';
-import { CommentLike } from './commentLike.model.js';
-import { User } from './user.model.js';
-import { CommentReport } from './commentReport.model.js';
+import Comment from './comment.model.js';
+import CommentLike from './commentLike.model.js';
+import User from '../user/user.model.js';
+import CommentReport from './commentReport.model.js';
+import sequelize from '../../config/db.connect.js';
 
 export class CommentDAO {
   async createComment(createCommentDTO) {
@@ -32,7 +33,6 @@ export class CommentDAO {
     }).then(comments => {
       return comments.map(comment => {
         const data = comment.toJSON();
-        // 본인이 작성한 게시글에 달린 댓글 처리
         if (comment.user_id === current_user_id) {
           data.User.nickname = '작성자';
         }
@@ -43,20 +43,18 @@ export class CommentDAO {
 
   async updateComment(comment_id, content) {
     return await Comment.update(
-      { content, updated_at: new Date() }, // 수정 시 updated_at 필드 업데이트
+      { content, updated_at: new Date() },
       { where: { comment_id } }
     );
   }
 
   async deleteComment(comment_id, user_id) {
-    // 댓글이 실제로 존재하는지 확인
     const comment = await Comment.findOne({ where: { comment_id } });
-    
+
     if (!comment) {
       throw new Error('Comment not found');
     }
 
-    //본인 댓글만 삭제하도록 하기
     if (comment.user_id !== user_id) {
       throw new Error('Unauthorized to delete this comment');
     }
@@ -69,8 +67,8 @@ export class CommentDAO {
       where: { comment_id, user_id },
       defaults: { created_at: new Date() }
     });
-    
-    if (!created) { // 이미 좋아요를 눌렀다면, 좋아요를 취소
+
+    if (!created) {
       await like.destroy();
       return 'removed';
     } else {

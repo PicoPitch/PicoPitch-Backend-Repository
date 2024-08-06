@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../../config/db.connect.js'
+import sequelize from '../../config/db.connect.js';
 
-export const CommentReport = sequelize.define('CommentReport', {
+const CommentReport = sequelize.define('CommentReport', {
   report_id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
@@ -10,21 +10,13 @@ export const CommentReport = sequelize.define('CommentReport', {
   comment_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
-    references: {
-      model: 'Comments',
-      key: 'comment_id',
-    },
   },
   user_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'user_id',
-    },
   },
   reason: {
-    type: DataTypes.ENUM('유해 정보 포함', '욕설 및 비방', '악성 댓글'),
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   created_at: {
@@ -36,3 +28,5 @@ export const CommentReport = sequelize.define('CommentReport', {
   tableName: 'CommentReports',
   timestamps: false,
 });
+
+export default CommentReport;

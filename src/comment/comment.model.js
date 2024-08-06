@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../../config/db.connect.js'
-//근데 사용자 받아오고 할라면 user 도메인이랑 연동?이 돼야해서 회의하면서 얘기해봐야할 것 같습니다
-export const Comment = sequelize.define('Comment', {
+import sequelize from '../../config/db.connect.js';
+
+const Comment = sequelize.define('Comment', {
   comment_id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
@@ -36,3 +36,5 @@ export const Comment = sequelize.define('Comment', {
   tableName: 'Comments',
   timestamps: false,
 });
+
+export default Comment;

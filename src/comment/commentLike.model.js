@@ -1,9 +1,7 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../../config/db.connect.js'
-import { Comment } from './comment.model.js';
-import { User } from './user.model.js'; // 사용자 모델이 필요할 수 있습니다.
+import sequelize from '../../config/db.connect.js';
 
-export const CommentLike = sequelize.define('CommentLike', {
+const CommentLike = sequelize.define('CommentLike', {
   C_like_id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
@@ -12,18 +10,10 @@ export const CommentLike = sequelize.define('CommentLike', {
   comment_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
-    references: {
-      model: Comment,
-      key: 'comment_id',
-    },
   },
   user_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
-    references: {
-      model: User, //유저 
-      key: 'user_id',
-    },
   },
   created_at: {
     type: DataTypes.DATE,
@@ -35,8 +25,4 @@ export const CommentLike = sequelize.define('CommentLike', {
   timestamps: false,
 });
 
-CommentLike.sync().then(() => {
-  return CommentLike.addIndex(['comment_id', 'user_id'], {
-    unique: true,
-  });
-});
+export default CommentLike;
