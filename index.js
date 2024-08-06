@@ -3,45 +3,99 @@ import express from 'express';
 import SwaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import session from 'express-session';
+import passport from 'passport';
+import cookieParser from 'cookie-parser';
 
 import { specs } from './config/swagger.config.js';
 import { response } from './config/response.js';
 import { status } from './config/response.status.js';
 import { healthRoute } from './src/health/health.route.js';
+import { authRoute } from './src/auth/auth.route.js'; // Assuming you have an auth route
+const KakaoStrategy = require('passport-kakao').Strategy;
 
-dotenv.config();    // .env 파일 사용 (환경 변수 관리)
+dotenv.config(); // Load environment variables from .env file
 
 const app = express();
 
-// server setting - veiw, static, body-parser etc..
-app.set('port', process.env.PORT || 8080)   // 서버 포트 지정
-app.use(cors());                            // cors 방식 허용
-app.use(express.static('public'));          // 정적 파일 접근
-app.use(express.json());                    // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
-app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+// Server settings - view, static, body-parser, etc.
+app.set('port', process.env.PORT || 8080); // Set server port
+app.use(cors()); // Enable CORS
+app.use(express.static('public')); // Serve static files
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: false })); // Parse URL-encoded bodies
+app.use(cookieParser()); // Parse cookies
 
+// Session and Passport configuration
+app.use(session({
+    secret: 'secretKey',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Use 'true' if using HTTPS
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Swagger documentation
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
+
+// Routes
+app.use('/auth', authRoute);
+app.get('/auth-ok', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.send(`<h1>Hello ${req.user.username}!</h1><a href="/auth/logout">Logout</a>`);
+    } else {
+        res.send('<h1>Home</h1><a href="/auth/kakao">Login with Kakao</a>');
+    }
+});
+
+// 환경 변수 설정
+const KAKAO_CLIENT_ID = 'YOUR_KAKAO_CLIENT_ID';
+const KAKAO_CLIENT_SECRET = 'YOUR_KAKAO_CLIENT_SECRET'; // 필요시 사용
+const KAKAO_CALLBACK_URL = 'http://localhost:3000/auth/kakao/callback';
+
+// Passport 전략 설정
+passport.use(new KakaoStrategy({
+    clientID: KAKAO_CLIENT_ID,
+    clientSecret: KAKAO_CLIENT_SECRET, // 필요시 사용
+    callbackURL: KAKAO_CALLBACK_URL
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        // 사용자 정보와 토큰을 이용한 처리
+        return done(null, profile);
+    } catch (error) {
+        return done(error);
+    }
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.deserializeUser((obj, done) => {
+    done(null, obj);
+});
 
 app.use('/health', healthRoute);
 
 app.get('/', (req, res, next) => {
-    res.send(response(status.SUCCESS, "루트 페이지!"));
+    res.send(response(status.SUCCESS, "Root page!"));
 });
 
-// error handling
+// Error handling
 app.use((req, res, next) => {
-    res.send(response(status.BAD_REQUEST, "Base Error"));
+    res.status(404).send(response(status.BAD_REQUEST, "Base Error"));
 });
 
 app.use((err, req, res, next) => {
-    // 템플릿 엔진 변수 설정
     res.locals.message = err.message;
-    // 개발환경이면 에러를 출력하고 아니면 출력하지 않기
     res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
     console.error(err);
-    res.status(err.data.status || status.INTERNAL_SERVER_ERROR).send(response(err.data));
+    res.status(err.status || status.INTERNAL_SERVER_ERROR).send(response(err.status || status.INTERNAL_SERVER_ERROR, err.message));
 });
 
+// Start server
 app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);
 });
