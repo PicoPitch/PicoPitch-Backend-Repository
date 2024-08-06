@@ -1,5 +1,5 @@
 // repositories/presentationRepository.js
-import pool from '../config/db.connect.js';
+import pool from '../../config/db.connect.js';
 
 export const getPresentationsList = async (userId, order) => {
     try {

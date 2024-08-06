@@ -2,7 +2,7 @@
 import {
     getPresentationsList as getPresentationsListRepo, deletePresentation as deletePresentationRepo,
     updatePresentationTitle as updatePresentationTitleRepo, createPresentation as createPresentationRepo
-} from '../presentations/presentations.repository.js';
+} from './presentations.repository.js';
 
 export const getPresentationsList = async (userId, order) => {
     try {
@@ -41,4 +41,6 @@ export const createPresentation = async (presentationData) => {
         throw error;
     }
 };
+
+
 
