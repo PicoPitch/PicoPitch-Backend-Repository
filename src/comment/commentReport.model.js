@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../database';
+import { sequelize } from '../../config/db.connect.js'
 
 export const CommentReport = sequelize.define('CommentReport', {
   report_id: {

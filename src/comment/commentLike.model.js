@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../database';
+import { sequelize } from '../../config/db.connect.js'
 import { Comment } from './comment.model.js';
 import { User } from './user.model.js'; // 사용자 모델이 필요할 수 있습니다.
 
