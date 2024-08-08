@@ -30,19 +30,34 @@ app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
 });
 
-// error handling
+// 기본 에러 핸들러 (404 Not Found)
 app.use((req, res, next) => {
-    res.send(response(status.BAD_REQUEST, "Base Error"));
+    res.status(status.NOT_FOUND).json({
+        status: status.NOT_FOUND,
+        isSuccess: false,
+        code: 'NOT_FOUND',
+        message: 'Endpoint not found'
+    });
 });
 
+// 에러 처리 미들웨어
+// 에러 처리 미들웨어
 app.use((err, req, res, next) => {
-    // 템플릿 엔진 변수 설정
-    res.locals.message = err.message;
-    // 개발환경이면 에러를 출력하고 아니면 출력하지 않기
-    res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
-    console.error(err);
-    res.status(err.data.status || status.INTERNAL_SERVER_ERROR).send(response(err.data));
+    console.error(err); // 콘솔에 에러를 출력합니다.
+
+    // 상태 코드와 응답 메시지 설정
+    const statusCode = typeof err.data?.status === 'number' ? err.data.status : status.INTERNAL_SERVER_ERROR.status;
+    const responseMessage = typeof err.data?.message === 'string' ? err.data.message : 'Internal Server Error';
+
+    // 응답 보내기
+    res.status(statusCode).json({
+        status: statusCode,
+        isSuccess: false,
+        code: 'ERROR',
+        message: responseMessage
+    });
 });
+
 
 app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);
