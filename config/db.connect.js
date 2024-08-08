@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const sequelize = new Sequelize(
-    process.env.DB_NAME || 'picopitch',  // 데이터베이스 이름
+    process.env.DB_NAME || 'picodb',  // 데이터베이스 이름
     process.env.DB_USER || 'root',  // 사용자 이름
     process.env.DB_PASSWORD || '',  // 비밀번호
     {
