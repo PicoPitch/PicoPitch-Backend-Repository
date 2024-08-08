@@ -1,6 +1,6 @@
-// config/db.connect.js
-import { Sequelize } from 'sequelize';
+import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
 
 dotenv.config();
 
@@ -14,5 +14,6 @@ const sequelize = new Sequelize(
         logging: false,  // SQL 쿼리 로그 출력 여부
     }
 );
+
 
 export default sequelize;
