@@ -12,7 +12,7 @@ const Question = sequelize.define('Question', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Users', // 'Users'는 실제 사용자 모델의 테이블명
+      model: 'Users', 
       key: 'user_id'
     }
   },
@@ -20,7 +20,7 @@ const Question = sequelize.define('Question', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Ppts', // 'Ppts'는 실제 PPT 모델의 테이블명
+      model: 'Ppts', 
       key: 'ppt_id'
     }
   },
@@ -28,7 +28,7 @@ const Question = sequelize.define('Question', {
     type: DataTypes.INTEGER,
     allowNull: true, // script_id가 선택적일 경우
     references: {
-      model: 'Scripts', // 'Scripts'는 실제 스크립트 모델의 테이블명
+      model: 'Scripts', 
       key: 'script_id'
     }
   },
@@ -50,7 +50,7 @@ const Question = sequelize.define('Question', {
     onUpdate: DataTypes.NOW
   }
 }, {
-  tableName: 'ExpectedQuestions', // 실제 테이블명으로 수정하세요
+  tableName: 'ExpectedQuestions', 
   timestamps: false // created_at과 updated_at을 직접 관리하는 경우
 });
 
