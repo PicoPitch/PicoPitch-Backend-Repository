@@ -31,15 +31,16 @@ export const addKeyword = async (req, res) => {
 };
 
 export const updateKeyword = async (req, res) => {
-    const { user_id, ppt_id, script_id, keyword } = req.body; // Assuming updated keyword data comes in request body
+    const { ppt_id, script_id, keyword } = req.body;
+    const { user_id } = req.user;
 
-    if (!user_id || !ppt_id || !script_id || !keyword) {
-        return res.status(400).json({ message: 'Missing required fields: user_id, ppt_id, script_id, keyword' });
+    if (!ppt_id || !script_id || !keyword) {
+        return res.status(400).json({ message: 'Missing required fields: ppt_id, script_id, keyword' });
     }
 
     try {
         await updateExistingKeyword(user_id, ppt_id, script_id, keyword);
-        res.status(200).json({ message: 'Keyword updated successfully' });
+        res.status(200).json({ message: '키워드 업데이트 성공' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

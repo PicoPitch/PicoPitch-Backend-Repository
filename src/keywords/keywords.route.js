@@ -7,5 +7,5 @@ keywordsRoute.delete('/', deleteKeyword)
 
 keywordsRoute.post('/', addKeyword)
 
-keywordsRoute.put('/', updateKeyword)
+keywordsRoute.patch('/', updateKeyword)
 

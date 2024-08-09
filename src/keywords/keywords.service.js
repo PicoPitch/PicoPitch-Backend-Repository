@@ -5,6 +5,7 @@ export const deleteKeywordByCompositeKey = async (user_id, ppt_id, script_id) =>
 };
 
 export const addNewKeyword = async (user_id, ppt_id, script_id, keyword) => {
+    console.log("addNewKeyword입니다 여기");
     return await insertKeyword(user_id, ppt_id, script_id, keyword);
 };
 

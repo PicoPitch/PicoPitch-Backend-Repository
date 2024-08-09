@@ -10,6 +10,8 @@ import { status } from './config/response.status.js';
 import { healthRoute } from './src/health/health.route.js';
 import { keywordsRoute } from './src/keywords/keywords.route.js';
 
+import { pool as dbConnection } from './config/db.connect.js';
+
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
 const app = express();
@@ -31,6 +33,17 @@ app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
 });
 
+dbConnection
+    .getConnection()
+    .then((connection) => {
+        console.log('데이터베이스에 성공적으로 연결되었습니다!');
+        connection.release(); // 연결을 풀에 반환
+    })
+    .catch((error) => {
+        console.error('데이터베이스 연결에 실패했습니다:', error.message);
+    });
+
+
 // error handling
 app.use((req, res, next) => {
     res.send(response(status.BAD_REQUEST, "Base Error"));
@@ -48,3 +61,4 @@ app.use((err, req, res, next) => {
 app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);
 });
+
