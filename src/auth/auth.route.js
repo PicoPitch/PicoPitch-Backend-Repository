@@ -24,6 +24,3 @@ import { signInKakao } from "../auth/auth.controller.js";
 export const authRoute = express.Router();
 
 authRoute.post('/kakao/signin', signInKakao);
-
-
-

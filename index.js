@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: false })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
 
 app.use("/auth", authRoute);
-console.log('authRoute:', authRoute);
+// console.log('authRoute:', authRoute);
 
 
 // Session and Passport configuration
