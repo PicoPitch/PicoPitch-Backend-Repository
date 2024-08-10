@@ -127,29 +127,25 @@ export class boardDAO{
             limit : 10 // 상위 10개만
         });   
     }
-    // 최신순 게시물 보기 기능
-    async getBoardsByLatest(){
-        return await Board.findAll({
-            order : [[ 'created_at', 'DESC']]
-        });
-    }
-    // 좋아요순 게시물 보기 기능
-    async getBoardsByLikes(){
-        return await Board.findAll({
-            order : [[ 'created_at', 'DESC']]
-        });
-    }
-    // 댓글순 게시물 보기 기능
-    async getBoardsByComments(){
-        return await Board.findAll({
-            order : [[ 'created_at', 'DESC']]
-        });
-    }
-    // 카테고리별 게시물 보기 기능
-    async getBoardsCategorys(category){
+    // 게시물 보기 기능
+    async getBoardss(category, sortBy){
+        let sort ;
+        switch(sortBy){
+            case 'likes':
+                sort = [['like_count', 'DESC']];
+                break;
+            case 'comments':
+                sort = [['comment_count', 'DESC']];
+                break;
+            case 'recent':
+            default:
+                sort = [['created_at', 'DESC']];
+                break;
+        }
+        
         return await Board.findAll({
             where : { category : category},
-            order : [[ 'created_at', 'DESC']]
+            order : sort
         });
     }
 }
