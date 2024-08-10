@@ -1,25 +1,27 @@
-name: Node.js Dev CI/CD
+name: HouseKeeping Dev CI/CD
+
 on:
-  pull_request: #merge가 되었을 때 github action 실행
-    types: [closed]
-  workflow_dispatch: #수동 실행도 가능하도록 함
+  pull_request:      # pull request -> merge 가 되었을 때 Github Action 실행!
+    types: [ closed ]
+  workflow_dispatch: # 수동 실행도 가능하도록 함
 
 jobs:
   build:
-  #pull 요청이 dev에 merge 되었을떄 아래 step를 실행
-  if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    # pull 요청이 dev에 merge 되었을 때 아래 steps를 실행
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    
+    runs-on: ubuntu-latest  # 우분투 최신 버전으로 실행
 
-  runs-on: ubuntu-latest # ubuntu 최신 버전으로 실행
+    strategy:
+      matrix:
+        node-version: ['18.x']  # 노드 버전 지정! 여러 개도 가능! ['18.x', '14.x'] 요렇게
+        
+    steps:
+      # build 할 코드를 가져옴 (코드 checkout - github에서 제공해주는 checkout@v3 사용)
+      - name: Checkout
+        uses: actions/checkout@v3   
 
-  strategy:
-    matrix:
-      node-version: ['18.x']
-
-  steps:
-    - name: Checkout
-      uses: actions/ checkout@v3
-
-  #node.js 세팅
+      # Node.js 세팅
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -71,8 +73,8 @@ jobs:
         with:
           aws_access_key: ${{secrets.AWS_ACTION_ACCESS_KEY_ID}}
           aws_secret_key: ${{secrets.AWS_ACTION_SECRET_ACCESS_KEY}}
-          application_name: test8-dev
-          environment_name: Test8-dev-env
+          application_name: housekeeping-dev
+          environment_name: Housekeeping-dev-env
           version_label: github-action-${{ steps.current-time.outputs.formattedTime }}  # version_label은 이전에 배포한 label과 중복되면 안됨!
           use_existing_version_if_available: true
           region: ap-northeast-2
@@ -82,5 +84,3 @@ jobs:
       # 그냥 다 했다고 출력하기
       - name: Deployed!
         run: echo App deployed to ELB
-#깃허브가 자체적으로 리눅스 가상 환경을 만들어서 배표에 필요한 
-#빌드 과정 진행 , 특정 디렉토리 생성
