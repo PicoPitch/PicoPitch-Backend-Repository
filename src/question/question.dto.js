@@ -7,3 +7,10 @@ export class CreateQuestionDTO {
         this.answer = answer;
     }
 }
+
+export class UpdateQuestionDTO {
+    constructor(question, answer) {
+      this.question = question;
+      this.answer = answer;
+    }
+}

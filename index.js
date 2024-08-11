@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
 app.use('/health', healthRoute);
-app.use('/answers', questionRoute);
+app.use('/questions', questionRoute);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
