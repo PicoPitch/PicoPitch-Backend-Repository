@@ -8,7 +8,7 @@ import cors from 'cors';
 import { response } from './config/response.js';
 import { status } from './config/response.status.js';
 import { healthRoute } from './src/health/health.route.js';
-import {BoardRouter } from './src/board/board.route.js';
+import { boardRoute } from './src/board/board.route.js';
 //import {UserRouter} from './src/routes/user.router.js';
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
@@ -26,7 +26,7 @@ app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
 
 app.use('/health', healthRoute);
-app.use('/Boards', BoardRouter);
+app.use('/boards', boardRoute);
 
 
 app.get('/', (req, res, next) => {
@@ -40,13 +40,16 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    // 템플릿 엔진 변수 설정
+    const errorData = err.data || { status: status.INTERNAL_SERVER_ERROR, message: err.message || "Internal Server Error" };
+
     res.locals.message = err.message;
-    // 개발환경이면 에러를 출력하고 아니면 출력하지 않기
     res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+
     console.error(err);
-    res.status(err.data.status || status.INTERNAL_SERVER_ERROR).send(response(err.data));
+
+    res.status(errorData.status).send(response(errorData.status, errorData.message));
 });
+
 
 app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);

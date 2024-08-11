@@ -1,23 +1,23 @@
-import {DataType} from sequelize;
+import {DataTypes} from 'sequelize';
 import sequelize from '../../config/db.connect.js';
 
-const BoardLike = sequelize.define('BoardLikes',{
+const BoardLikes = sequelize.define('Board_Likes',{
     like_id :{
-        type : DataType.BIGINT,
+        type : DataTypes.BIGINT,
         primaryKey : true,
         autoIncrement : true
     },
     user_id :{
-        type : DataType.BIGINT,
+        type : DataTypes.BIGINT,
         allowNull : false
     },
     board_id :{
-        type : DataType.BIGINT,
+        type : DataTypes.BIGINT,
         allowNull : false
     }
     },{
-        tableName : 'BoardLikes',
+        tableName : 'Board_Likes',
         timestamps : false
     });
 
-    export default BoardLike ;
+    export default BoardLikes ;

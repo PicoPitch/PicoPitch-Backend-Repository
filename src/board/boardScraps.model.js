@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
+import {DataTypes} from 'sequelize';
 import sequelize from '../../config/db.connect.js';
 
-const BoardReport = sequelize.define('Board_Report',{
-    report_id :{
+const Scraps = sequelize.define('Scraps',{
+    scrap_id :{
         type : DataTypes.BIGINT,
         primaryKey : true,
         autoIncrement : true
@@ -14,14 +14,10 @@ const BoardReport = sequelize.define('Board_Report',{
     board_id :{
         type : DataTypes.BIGINT,
         allowNull : false
-    },
-    reasons :{
-        type : DataTypes.TEXT,
-        allowNull : false
     }
     },{
-        tableName : 'Board_Report',
+        tableName : 'Scraps',
         timestamps : false
     });
 
-    export default BoardReport ;
+    export default Scraps ;

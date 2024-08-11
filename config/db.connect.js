@@ -16,7 +16,7 @@ export const pool = mysql.createPool({
     connectTimeout: 60000
 });
 
-const sequelize = new Sequelize('picopitch', 'root', process.env.DB_PASSWORD, {
+const sequelize = new Sequelize('picodb', 'root', process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: 'mysql', // or 'postgres', 'sqlite', 'mssql', etc.
     logging: false

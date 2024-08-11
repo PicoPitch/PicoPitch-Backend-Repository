@@ -1,6 +1,5 @@
-import {BoardDAO} from './board.dao.js';
-import {CreateBoardDTO} from './board.dto.js';
-import {UpdateBoardDTO} from './board.dto.js';
+import { BoardDAO } from './board.dao.js';
+import { CreateBoardDTO, UpdateBoardDTO } from './board.dto.js';
 import {response} from '../../config/response.js';
 import { status } from '../../config/response.status.js';
 
@@ -15,111 +14,168 @@ export class BoardController{
                 req.body.user_id,
                 req.body.title,
                 req.body.content,
-                //req.body.photo,
+                //req.body.photo
                 req.body.category
             );    
             const board = await boardDAO.createBoard(createBoardDTO);
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, board));
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data: board
+            });
         } catch(error){
             next(error);
         }
     }
     // 게시물 수정
     async updateBoard(req, res, next) {
-        const  {board_id} = req.params;
-        const  {title,content} = req.body;
-        try{
-        const updated_at = new Date();
-        
-        const updateBoardDTO= new  UpdateBoardDTO( title, content, updated_at);
-
-        const updatedBoard = await boardDAO.updateBoard(board_id,updateBoardDTO);
-        if(updatedBoard){
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, updatedData));
-        }else {
-            res.status(status.NOT_FOUND.status).send(response(status.NOT_FOUND, 'board is not found'));
-        }
-        }catch(error){
-        next(error);
-        }
-    }
-    // 게시물 좋아요 기능
-    async boardLike(req, res, next){
-        const {board_id } = req.params;
-        const {user_id} = req.user_id;
+        const { board_id } = req.params;
+        const { title, content } = req.body;
         try {
-            // 좋아요가 눌려져 있는지
-            const isLiked = await boardDAO.isUserLikedBoard(board_id, user_id);
-            let result ;
-            if (isLiked) {
-                //true 경우
-                result = await boardDAO.removeLike(board_id, user_id);
-                
-            }else{
-                //false 경우
-                result = await boardDAO.addLike(board_id, user_id);
+            const updated_at = new Date();
+            const updateBoardDTO = new UpdateBoardDTO(title, content, updated_at);
+
+            const updatedBoard = await boardDAO.updateBoard(board_id, updateBoardDTO);
+            if (updatedBoard === null) {
+                res.status(status.NOT_FOUND.status).json({
+                    status: status.NOT_FOUND.status,
+                    message: 'Board not found'
+                });
+            } else {
+                res.status(status.SUCCESS.status).json({
+                    status: status.SUCCESS.status,
+                    message: 'Board updated successfully',
+                    data: updatedBoard
+                });
             }
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, result));
-        }catch(error){
-            next(error);
-        }
-    }
-    // 게시물 스크랩 기능
-    async boardScrap(req, res, next){
-        const {board_id} = req.params;
-        const {user_id} = res.user_id;
-        try{
-            //사용자가 스크랩을 했는지
-            const isScraped = await boardDAO.isUserScrapedBoard(board_id, user_id);
-            let result ;
-            if (isScraped){
-                //true
-                result = await boardDAO.removeScrap(board_id, user_id);
-            }else{
-                //false
-                result = await boardDAO.addScrap(board_id, user_id);
-            }   
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, result));
-        }catch(error){
-            next(error);
-        }
-    }
-    // 게시물 신고 기능
-    async reportBoard(req, res, next){
-        const {board_id} = req.params;
-        const {user_id} = req.user_id;
-        const {reason} =req.body;
-        // reason이 신고 사유에 잇다면 신고 제출할 수 있다.
-        // 제출 하고 문구 
-        try{
-            const vaildReasons = ['유해한 주제','관련없는 주제','욕설 및 비방'];
-            if (!vaildReasons.includes(reason)) {
-                return res.status(status.BAD_REQUEST.status).send(response(status.BAD_REQUEST, { message: '유효하지 않은 신고 사유입니다.' }));
-            }
-            const result = await boardDAO.reportBoard(board_id, user_id, reason);
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, result));
         } catch (error) {
             next(error);
         }
     }
+
     // 게시물 삭제 기능
     async deleteBoard(req, res, next) {
-        const {board_id} = req.params;
-        const {user_id} = req.user_id;
         try {
-            await boardDAO.deleteBoard(board_id, user_id);
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, {board_id}));
+            const { board_id } = req.params;
+            const { user_id } = req.body;
+            if (!user_id){
+                return res.status(401).send(response({ status: 401, isSuccess: false, message: 'User ID is required' }));
+            }
+            const deletedboard = await boardDAO.deleteBoard(board_id, user_id);
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data: deletedboard
+            });
         }catch(error){
             next(error);
         }
     }
+
+    // 게시물 신고 기능 - 신고 카테고리 3개 중에 int로 선택
+    async reportBoard(req, res, next){
+        try {
+            const { board_id } = req.params;
+            const { reasons, user_id } = req.body; 
+            if (!user_id) {
+                return res.status(401).send(response({ status: 401, isSuccess: false, message: 'User ID is required' }));
+            }
+            const reportboard = await boardDAO.reportBoard(board_id, user_id, reasons);
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data: reportboard
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // 게시물 좋아요 기능
+    async boardLike(req, res, next) {
+        //console.log("컨트롤러 시작")
+        try {
+            const { board_id } = req.params;
+            const { user_id } = req.body;
+            // 좋아요가 눌려져 있는지
+            const isLiked = await boardDAO.isUserLikedBoard(board_id, user_id);
+            let result ;
+            //console.log("컨트롤러 : ", isLiked);
+            if (isLiked) {
+                //true 경우
+                result = await boardDAO.removeLike(board_id, user_id);
+                res.status(200).json({
+                    status: 200,
+                    message: 'Like removed successfully',
+                    data: result
+                });
+            }else{
+                //false 경우
+                result = await boardDAO.addLike(board_id, user_id);
+                res.status(200).json({
+                    status: 200,
+                    message: 'Like added successfully',
+                    data: result
+                });
+            }
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data : result
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+
+    // 게시물 스크랩 기능
+    async boardScrap(req, res, next){
+        //console.log("컨트롤 시작");
+        try{
+            const { board_id } = req.params;
+            const { user_id } = req.body;
+            //사용자가 스크랩을 했는지
+            const isScraped = await boardDAO.isUserScrapedBoard(board_id, user_id);
+            let scrapresult ;
+            if (isScraped){
+                //true
+                scrapresult = await boardDAO.removeScrap(board_id, user_id);
+                res.status(200).json({
+                    status: 200,
+                    message: 'Scrap removed successfully',
+                    data: scrapresult
+                });
+            }else{
+                //false
+                scrapresult = await boardDAO.addScrap(board_id, user_id);
+                res.status(200).json({
+                    status: 200,
+                    message: 'Scrap added successfully',
+                    data: scrapresult
+                });
+            }   
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data : scrapresult
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+    
+    
     // 게시물 list 올리기
     async userListBoard(req, res, next){
         const {user_id} = req.params;
         try{
             //사용자가 작성한 게시물을 보여주기
             const userBoard = await boardDAO.getUserListBoard(user_id);
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, userBoard));
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data : userBoard
+            });
 
         }catch(error){
             next(error);
@@ -130,7 +186,11 @@ export class BoardController{
         const {user_id} = req.params;
         try{
             const userLikedBoard = await boardDAO.getUserLikedBoard(user_id);
-            res.status(status.SUCCESS.status).send(response(status.SUCCESS, userLikedBoard));
+            res.status(status.SUCCESS.status).json({
+                status: status.SUCCESS.status,
+                message: status.SUCCESS.message,
+                data : userLikedBoard
+            });
 
         }catch(error){
             next(error);
@@ -140,7 +200,7 @@ export class BoardController{
     async userScrapListBoard(req, res, next){
         const {user_id} = req.params;
         try {
-            const userScrapedBoard = await boardDAO.getUserScrapedBoaard(user_id);
+            const userScrapedBoard = await boardDAO.getUserScrapedBoard(user_id);
             res.status(status.SUCCESS.status).send(response(status.SUCCESS, userScrapedBoard));
         }catch(error){
             next(error);
@@ -159,69 +219,20 @@ export class BoardController{
         }
     }
     // 최신순 게시물 보기 기능
-    async getBoardsByLatest(req,res, next){
-        try {
-            const boardsByLatest = await boardDAO.getBoardsByLatest();
-            if (boardsByLatest.length === 0){
-                return res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, "게시물이 없습니다"));
-            }
-            res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, boardsByLatest));
-        }catch(error){
-            next(error);
-        }
-    }
-    // 좋아요순 게시물 보기 기능
-    async getBoardsByLikes(req, res, next){
-        try {
-            const boardsByLikes = await boardDAO.getBoardsByLikes();
-            if (boardsByLikes.length === 0){
-                return res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, "게시물이 없습니다"));
-            }
-            res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, boardsByLikes));
-        }catch(error){
-            next(error);
-        }
-    }
-    // 댓글순 게시물 보기 기능
-    async getBoardsByComments(req, res, next){
-        try {
-            const boardsByComments = await boardDAO.getBoardsByComments();
-            if (boardsByComments.length === 0){
-                return res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, "게시물이 없습니다"));
-            }
-            res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, boardsByComments));
-        }catch(error){
-            next(error);
-        }
-    }
-    // 카테고리별 게시물 보기 기능
-    async getBoardsByCategorys(req, res, next){
-        const { category } = req.params;
-        const vaildCategories =['꿀팁', '자유 게시물'];
+    async getBoards(req,res, next){
+        const { category, sortBy } = req.params;
+        const vaildCategories = ['꿀팁', '자유 게시판'];
         if (!vaildCategories.includes(category)){
-            return res.status(status.BAD_REQUEST.status).send(response(status.BAD_REQUEST, "유효하지 않은 케테고리입니다."));
+            return res.status(status.BAD_REQUEST.status).send(response(status.BAD_REQUEST, "유효하지 않은 카테고리입니다."));
         }
         try {
-            const boardsByCategorys = await boardDAO.getBoardsByCategorys(category);
-            if (boardsByCategorys.length === 0){
-                return res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, "게시물이 없습니다"));
+            const getboards = await boardDAO.getBoards(category, sortBy);
+            if (this.boardScrap.length === 0 ){
+                return res.status(status.NOT_FOUND.status).send(response(status.NOT_FOUND, "해당 카테고리에 게시물이 없습니다."));
             }
-            res.status(status.NO_BOARD.status).send(response(status.NO_BOARD, boardsByCategorys));
+            return res.status(status.SUCCESS.status).send(response(status.SUCCESS, getboards));
         }catch(error){
             next(error);
         }
-    }
-    
-    
+    }   
 }
-/**
- * // 최신순 게시글 보기 기능
-router.get('/',boardController.getBoards);
-// 좋아요순 게시물 보기 기능
-router.get('/likes', boardController.getBoardsByLikes);
-// 댓글순 게시물 보기 기능
-router.get('/comments', boardController.getBoardsByComments);
-// 카테고리 별로 게시물 보기 기능
-router.get('/categorys', boardController.getBoardsByCategory);
-
- */

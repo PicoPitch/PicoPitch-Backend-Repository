@@ -1,51 +1,51 @@
-import {DataType} from sequelize;
+import { DataTypes } from 'sequelize';
 import sequelize from '../../config/db.connect.js';
 
 const Board = sequelize.define('Board',{
     board_id :{
-        type : DataType.BIGINT,
+        type : DataTypes.BIGINT,
         primaryKey : true,
-        autoIncrement : true,
+        autoIncrement : true
     },
     user_id :{
-        type : DataType.BIGINT,
+        type : DataTypes.BIGINT,
         allowNull : false
     },
     title:{
-        type : DataType.STRING,
+        type : DataTypes.STRING,
         allowNull : false
     },
     content :{
-        type : DataType.STRING,
+        type : DataTypes.STRING,
         allowNull : false
     },
     updated_at :{
-        type : DataType.DATE,
+        type : DataTypes.DATE,
         allowNull : false,
-        defaultValue : DataType.NOW
+        defaultValue : DataTypes.NOW
     },
     scrap_count : {
-        type : DataType.INTEGER,
+        type : DataTypes.INTEGER,
         allowNull : false,
         defaultValue: 0,
     },
     like_count :{
-        type : DataType.INTEGER,
+        type : DataTypes.INTEGER,
         allowNull : false,
         defaultValue: 0,
     },
     comment_count :{
-        type : DataType.INTEGER,
+        type : DataTypes.INTEGER,
         allowNull : false,
         defaultValue: 0,
     },
     created_at : { 
-        type : DataType.DATE,
+        type : DataTypes.DATE,
         allowNull : false,
-        defaultValue : DataType.NOW
+        defaultValue : DataTypes.NOW
     },
     category :{
-        type : DataType.ENUM('꿀팁, 자유 게시판'),
+        type : DataTypes.ENUM('꿀팁, 자유 게시판'),
         allowNull : false
     }
     },{
