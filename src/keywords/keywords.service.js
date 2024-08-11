@@ -1,7 +1,7 @@
 import { deleteByCompositeKey, insertKeyword, modifyKeyword } from '../keywords/keywords.repository.js';
 
-export const deleteKeywordByCompositeKey = async (user_id, ppt_id, script_id) => {
-    return await deleteByCompositeKey(user_id, ppt_id, script_id);
+export const deleteKeywordByCompositeKey = async (user_id, ppt_id, script_id, keyword) => {
+    return await deleteByCompositeKey(user_id, ppt_id, script_id, keyword);
 };
 
 export const addNewKeyword = async (user_id, ppt_id, script_id, keyword) => {
