@@ -1,36 +1,23 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../config/db.connect.js';
 
-const Answer = sequelize.define('Answer', {
-  answer_id: {
-    type: DataTypes.BIGINT,
-    primaryKey: true,
-    autoIncrement: true,
-  },
+const ExpectedQuestion = sequelize.define('ExpectedQuestion', {
   question_id: {
     type: DataTypes.BIGINT,
+    primaryKey: true,
     allowNull: false,
   },
   user_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  content: {
+  answer: {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updated_at: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
 }, {
-  tableName: 'Answers',
+  tableName: 'ExpectedQuestions',
   timestamps: false,
 });
 
-export default Answer;
+export default ExpectedQuestion;
