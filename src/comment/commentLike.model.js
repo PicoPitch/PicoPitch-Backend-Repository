@@ -21,7 +21,7 @@ const CommentLike = sequelize.define('CommentLike', {
     defaultValue: DataTypes.NOW,
   },
 }, {
-  tableName: 'CommentLikes',
+  tableName: 'Comment_Likes',
   timestamps: false,
 });
 

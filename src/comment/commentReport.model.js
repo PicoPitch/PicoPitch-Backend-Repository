@@ -25,7 +25,7 @@ const CommentReport = sequelize.define('CommentReport', {
     defaultValue: DataTypes.NOW,
   },
 }, {
-  tableName: 'CommentReports',
+  tableName: 'Comment_Report',
   timestamps: false,
 });
 
